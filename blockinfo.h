@@ -8,6 +8,7 @@
 #include <QXmlStreamReader>
 #include <QDir>
 #include <QDebug>
+#include <QString>
 
 class BlockInfo
 {
@@ -19,6 +20,7 @@ public:
     QMap< int, QMap<QString, QString> > getInputs();
     QMap< int, QMap<QString, QString> > getOutputs();
     QFileInfo getPath();
+    QString getBlockCall();
 
     void setMaxTextLength(int maxTextLength);
     void setInputs(QMap< int, QMap<QString, QString> > inputs);
@@ -33,6 +35,7 @@ private:
     QMap< int, QMap<QString, QString> > inputs;
     QMap< int, QMap<QString, QString> > outputs;
     QFileInfo path;
+    QString blockCall;
 };
 
 #endif // BLOCKINFO_H

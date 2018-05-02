@@ -28,6 +28,11 @@ QFileInfo BlockInfo::getPath()
     return this->path;
 }
 
+QString BlockInfo::getBlockCall()
+{
+    return this->blockCall;
+}
+
 void BlockInfo::setMaxTextLength(int maxTextLength)
 {
     this->maxTextLength = maxTextLength;
@@ -56,6 +61,7 @@ void BlockInfo::parseXML(QFileInfo path)
     QMap< int, QMap<QString, QString> > outputs;
     QMap< int, QMap<QString, QString> > locals;
     int maxTextLength = 0;
+    QString blockCall;
 
     if(!f.open(QIODevice::ReadOnly))
     {
@@ -83,6 +89,8 @@ void BlockInfo::parseXML(QFileInfo path)
                         || reader.name().toString() == QString("Outputs")
                         || reader.name().toString() == QString("Locals"))
                     currGroup = reader.name().toString();
+                if(lastGroup == "")
+                    lastGroup = currGroup;
             }
 
             //here we are inside the element, so if it is not empty, we can read the element's value
@@ -91,8 +99,6 @@ void BlockInfo::parseXML(QFileInfo path)
 
                 if(currItem.contains(currElement))
                 {
-                    if(lastGroup == "")
-                        lastGroup = currGroup;
                     if(lastGroup == QString("Inputs"))
                         inputs[currItemID] = currItem;
                     else if(lastGroup == QString("Outputs"))
@@ -118,12 +124,19 @@ void BlockInfo::parseXML(QFileInfo path)
         else if(lastGroup == QString("Locals"))
             locals[currItemID] = currItem;
 
+        QString blockName(path.fileName().left(path.fileName().length() - 4));
+        blockCall = blockName + "(";
         for(int i = 0; i < inputs.count(); ++i)
         {
             int len = inputs[i]["Name"].length() + inputs[i]["STType"].length() + 3;
             if(len > maxTextLength)
                 maxTextLength = len;
+            blockCall += inputs[i]["Name"] + ", ";
         }
+        if(inputs.count() != 0)
+            blockCall = blockCall.left(blockCall.length() - 2);
+        blockCall += ")";
+
         for(int i = 0; i < outputs.count(); ++i)
         {
             int len = outputs[i]["Name"].length() + outputs[i]["STType"].length() + 3;
@@ -132,6 +145,7 @@ void BlockInfo::parseXML(QFileInfo path)
         }
     }
 
+    this->blockCall = blockCall;
     this->maxTextLength = maxTextLength;
     this->inputs = inputs;
     this->outputs = outputs;

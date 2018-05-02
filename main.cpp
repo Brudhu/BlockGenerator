@@ -28,6 +28,9 @@ int main(int argc, char *argv[])
 
     QCommandLineOption r(QStringList() << "r" << "R" << "recursive", QCoreApplication::translate("main", "Generate PNG image in directories and files recursively"));
     parser.addOption(r);
+
+    QCommandLineOption c(QStringList() << "c" << "call", QCoreApplication::translate("main", "Generate file with the block calling information"));
+    parser.addOption(c);
     parser.process(a);
 
     const QStringList args = parser.positionalArguments();
@@ -36,8 +39,10 @@ int main(int argc, char *argv[])
         parser.showHelp();
     }
     bool recursive = parser.isSet(r);
+    bool calls = parser.isSet(c);
     QFileInfo path(args.at(0));
 
+    QString callsString;
     if(path.isDir()) // If it's a directory, enter and do the regex replacing in all the files.
     {
         qDebug() << "Argument \"Path\" is a directory.";
@@ -61,7 +66,9 @@ int main(int argc, char *argv[])
             BlockInfo block;
             block.parseXML(filePath);
             block.saveImage();
+            callsString += block.getBlockCall() + QString("\n");
         }
+        callsString = callsString.left(callsString.count() - 1);
     }
     else if(path.isFile())
     {
@@ -70,6 +77,21 @@ int main(int argc, char *argv[])
         BlockInfo block;
         block.parseXML(path);
         block.saveImage();
+        callsString += block.getBlockCall();
+    }
+
+    if(calls)
+    {
+        QDir textDir("./textinfo");
+        if(!textDir.exists())
+            textDir.mkpath(".");
+        QFile file(QString("%1/blockcalls.txt").arg(textDir.path()));
+
+        if ( file.open(QIODevice::WriteOnly) )
+        {
+            QTextStream stream( &file );
+            stream << callsString << endl;
+        }
     }
 
     return 0;
