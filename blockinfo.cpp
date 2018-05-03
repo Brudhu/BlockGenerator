@@ -160,8 +160,10 @@ void BlockInfo::saveImage()
     QFileInfo path = this->getPath();
 
     int backgroundWidth = 884;
-    int pointSize = 60;
-    int width = backgroundWidth + 264 * 2 + 2 * (32 * pointSize / 50) * maxTextLength;
+    int pointSize = POINT_SIZE; //60;
+    int defaultPointSize = DEFAULT_POINT_SIZE; //50;
+    int fontWidth = FONT_WIDTH; //32;
+    int width = backgroundWidth + 264 * 2 + 2 * (fontWidth * pointSize / defaultPointSize) * maxTextLength;
     //int width = 3000;
     int height = 404 + (120 * (qMax(inputs.count(), outputs.count())));
     QString blockName = path.fileName().left(path.fileName().length() - 4);
@@ -193,13 +195,13 @@ void BlockInfo::saveImage()
 
     QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     font.setPointSize(pointSize);
-    //QFont font("Arial", 50, -1, false);
+    //QFont font("Arial", defaultPointSize, -1, false);
     QPen pen(QColor(0, 0, 0, 255));
     painter.setFont(font);
     painter.setPen(pen);
 
     //for(auto elem = inputs.begin(); elem != inputs.end(); ++elem)
-    int textSize = (32 * pointSize / 50) * maxTextLength;
+    int textSize = (fontWidth * pointSize / defaultPointSize) * maxTextLength;
     int inOutSpacing = ((width - backgroundWidth) / 2) - 258 - textSize;
     for(int i = 0; i < inputs.count(); ++i)
     {
@@ -222,12 +224,12 @@ void BlockInfo::saveImage()
         painter.drawImage(target, drawer, source);
     }
 
-    font.setPointSize(60);
+    font.setPointSize(pointSize);
     pen.setColor(QColor(150, 0, 0, 255));
     painter.setFont(font);
     painter.setPen(pen);
 
-    int blockNameWidth = 32*60/50 * (blockName.length());
+    int blockNameWidth = fontWidth * pointSize / defaultPointSize * (blockName.length());
     int blockNameHeight = 65;
     QImage titleImage(blockNameWidth, 90, QImage::Format_RGBA8888);
     QPainter painterTitle(&titleImage);
@@ -239,7 +241,8 @@ void BlockInfo::saveImage()
 
     source = QRectF(0.0, 0.0, blockNameWidth, blockNameHeight);
 
-    blockNameWidth = qMin(21 * 32 * 60 / 50, blockNameWidth);
+    int titleMaxLen = TITLE_MAX_LEN;
+    blockNameWidth = qMin(titleMaxLen * fontWidth * pointSize / defaultPointSize, blockNameWidth);
     target = QRectF((width - blockNameWidth) / 2, 130 - (blockNameHeight / 2), blockNameWidth, blockNameHeight);
 
     painter.drawImage(target, titleImage, source);
