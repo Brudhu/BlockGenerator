@@ -79,7 +79,7 @@ void BlockInfo::parseXML(QFileInfo path)
         QMap <QString, QString> currItem;
 
         while(!reader.atEnd() && !reader.hasError()) {
-            QXmlStreamReader::TokenType token = reader.readNext();
+            reader.readNext();
 
             if (reader.isStartElement())
             {
@@ -159,13 +159,11 @@ void BlockInfo::saveImage()
     QMap< int, QMap<QString, QString> > outputs = this->getOutputs();
     QFileInfo path = this->getPath();
 
-    //float sizeMultiplier = 0.2;
     float backgroundWidth = 884;
     float pointSize = POINT_SIZE; //60;
     float defaultPointSize = DEFAULT_POINT_SIZE; //50;
     float fontWidth = FONT_WIDTH; //32;
     float width = backgroundWidth + 264 * 2 + 2 * (fontWidth * pointSize / defaultPointSize) * maxTextLength;
-    //int width = 3000;
     float height = 404 + (120 * (qMax(inputs.count(), outputs.count())));
     QString blockName = path.fileName().left(path.fileName().length() - 4);
 
@@ -202,8 +200,8 @@ void BlockInfo::saveImage()
     painter.setPen(pen);
 
     //for(auto elem = inputs.begin(); elem != inputs.end(); ++elem)
-    int textSize = (fontWidth * pointSize / defaultPointSize) * maxTextLength;
-    int inOutSpacing = ((width - backgroundWidth) / 2) - 258 - textSize;
+    float textSize = (fontWidth * pointSize / defaultPointSize) * maxTextLength;
+    float inOutSpacing = ((width - backgroundWidth) / 2) - 258 - textSize;
     for(int i = 0; i < inputs.count(); ++i)
     {
         QString inputInfo = QString("%1 (%2)").arg(inputs[i]["Name"], inputs[i]["STType"]);
@@ -230,8 +228,8 @@ void BlockInfo::saveImage()
     painter.setFont(font);
     painter.setPen(pen);
 
-    int blockNameWidth = fontWidth * pointSize / defaultPointSize * (blockName.length());
-    int blockNameHeight = 65;
+    float blockNameWidth = fontWidth * pointSize / defaultPointSize * (blockName.length());
+    float blockNameHeight = 65;
     QImage titleImage(blockNameWidth, 90, QImage::Format_RGBA8888);
     QPainter painterTitle(&titleImage);
     painterTitle.setFont(font);
