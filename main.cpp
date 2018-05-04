@@ -82,7 +82,8 @@ int main(int argc, char *argv[])
 
     if(calls)
     {
-        QDir textDir("./textinfo");
+        QString appDirPath = QGuiApplication::applicationDirPath();
+        QDir textDir(QString("%1/textinfo").arg(appDirPath));
         if(!textDir.exists())
             textDir.mkpath(".");
         QFile file(QString("%1/blockcalls.txt").arg(textDir.path()));

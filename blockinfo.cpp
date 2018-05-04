@@ -159,13 +159,14 @@ void BlockInfo::saveImage()
     QMap< int, QMap<QString, QString> > outputs = this->getOutputs();
     QFileInfo path = this->getPath();
 
-    int backgroundWidth = 884;
-    int pointSize = POINT_SIZE; //60;
-    int defaultPointSize = DEFAULT_POINT_SIZE; //50;
-    int fontWidth = FONT_WIDTH; //32;
-    int width = backgroundWidth + 264 * 2 + 2 * (fontWidth * pointSize / defaultPointSize) * maxTextLength;
+    //float sizeMultiplier = 0.2;
+    float backgroundWidth = 884;
+    float pointSize = POINT_SIZE; //60;
+    float defaultPointSize = DEFAULT_POINT_SIZE; //50;
+    float fontWidth = FONT_WIDTH; //32;
+    float width = backgroundWidth + 264 * 2 + 2 * (fontWidth * pointSize / defaultPointSize) * maxTextLength;
     //int width = 3000;
-    int height = 404 + (120 * (qMax(inputs.count(), outputs.count())));
+    float height = 404 + (120 * (qMax(inputs.count(), outputs.count())));
     QString blockName = path.fileName().left(path.fileName().length() - 4);
 
     QImage image(width, height, QImage::Format_RGBA8888);
@@ -247,7 +248,8 @@ void BlockInfo::saveImage()
 
     painter.drawImage(target, titleImage, source);
 
-    QDir imageDir("./blockimages");
+    QString appDirPath = QGuiApplication::applicationDirPath();
+    QDir imageDir(QString("%1/blockimages").arg(appDirPath));
     if(!imageDir.exists())
         imageDir.mkpath(".");
 

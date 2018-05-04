@@ -1,6 +1,7 @@
 #ifndef BLOCKINFO_H
 #define BLOCKINFO_H
 
+#include <QGuiApplication>
 #include <QMap>
 #include <QFileInfo>
 #include <QPainter>
