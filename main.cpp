@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
                                      "generate blocks for every file inside the directory.");
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument("path", QCoreApplication::translate("main", "Path to file or directory to replace strings."));
+    parser.addPositionalArgument("path", QCoreApplication::translate("main", "Path to file or directory to generate block info."));
 
     QCommandLineOption r(QStringList() << "r" << "R" << "recursive", QCoreApplication::translate("main", "Generate PNG image in directories and files recursively"));
     parser.addOption(r);
